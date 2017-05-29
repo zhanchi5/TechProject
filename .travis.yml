@@ -13,9 +13,15 @@ matrix:
             - llvm-toolchain-precise
             - ubuntu-toolchain-r-test
 script:
-- sudo apt install zlib1g-dev
-- sudo apt install curl
-#- sudo apt install openssl
+- sudo apt-get install zlib1g-dev
+- wget https://curl.haxx.se/download/curl-7.54.0.tar.gz
+- tar xvzf curl-7.54.0.tar.gz
+- rm curl-7.54.0.tar.gz
+- ls
+- cd curl-7.54.0
+- ./configure --disable-ftp --disable-file --disable-ldap --disable-dict --disable-telnet --disable-tftp --disable-rtsp --disable-pop3 --disable-imap --disable-smtp --disable-gopher --disable-ares --disable-debug --without-ssl --without-zlib --without-libidn --without-librtmp
+- make
+- sudo make install
 - cd
 - ls
 
