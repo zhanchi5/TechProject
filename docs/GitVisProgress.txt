@@ -1,0 +1,80 @@
+1.	Проект GitVis
+Возможность получить визуализированную информацию об удаленном репозитории, находящимся на сервисе GitHub.
+При указании ссылки на репозиторий – получение графа коммитов и их метаданных.
+2.	Проект поделен на части:
+-	Бэкэнд – объединение функций, отвечающих за отправление запроса на сервер GitHub API, обработка получаемого json файла, извелечение нужной информации, структуризация информации. 
+-	//TODO Фронтэнд – классы и функции, отвечающие за визуализацию графа и иерархии коммитов. 
+Классы в проекте:
+	Пространство имен ns
+		- Структура  “commit” –
+			- Хэш-функция коммита
+				- Автор коммита
+				- Дата коммита
+				- Комментарий
+				//TODO - Указатель на родительский коммит 
+				//almostDone – Стандартный конструктор
+			- Функция, получающая количество коммитов на репозитории
+- Вектор коммитов и функция добавления коммитов в список
+			 - //TODO – (Внешняя или внутренняя) структура иерархии коммита
+
+Функции в модуле «Бэкэнд»:
+-	getJSON ( *ссылка на репозиторий* ) – функция, использующая фреймворк cURL для отправления запросов на сервер GitHub. В функции реализовано отправление запросов на удаленный сервер, получение данных и сохранение их файл.
+-	FormattedJSON (**) – функция, форматирующая полученный неформатированный JSON файл в нужный вид.
+-	ToJSON ( *название файла*) – функция, отправляющая файл формата json в объект класса JSON (использовался фреймворк nlohmann::json)
+Функции в модуле «Фронтэнд» - //TODO
+
+
+
+Описание алгоритмов – потом
+Описание функций: 
+getJSON()
+
+static void getJSON(char* url, char* filename, unsigned int count) {
+	CURL  *curl; // указатель на объект cURL
+	curl = curl_easy_init(); // запуск "легкого" хэндлера
+	CURLcode res; // объект класса cURLcode
+
+	if (curl) {
+		struct curl_slist *chunk = NULL; // список на ноль
+		chunk = curl_slist_append(chunk, "User-Agent: lalala"); // кастомный хэдер USERAGENT в список хэдеров
+		res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk); // список отправляется в хэдер запроса
+		curl_easy_setopt(curl, CURLOPT_URL, url); // ссылка, по которой обращаемся
+
+		FILE *pF;
+		pF = fopen(filename, "wb");
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, pF); // команда на копирование данных в файл
+
+		res = curl_easy_perform(curl); // выполнение запросов 
+
+		if (res != CURLE_OK) // проверка
+			fprintf(stderr, "Could not download file: %s\n",
+				curl_easy_strerror(res));
+		else printf("SUCCESS: File has been dowloaded\n");
+
+		rewind(pF);
+		fseek(pF, 0, SEEK_END);
+		fileSize[count] = ftell(pF); // получение размера файла
+		curl_easy_cleanup(curl);
+		fclose(pF);
+	}
+}
+toJSON ( )
+void toJSON(json& j, char* filename, unsigned int c) {
+	std::ifstream fromFile(filename); // чтение символов из полученного файла
+	char* line = new char[fileSize[c]];
+	while (!fromFile.eof()) {
+		for (unsigned int i = 0; i <= fileSize[c]; ++i) {
+			fromFile >> line[i]; // копирование сиволов в char*
+		}
+	}
+	fromFile.close();
+
+	std::ofstream toFile(filename);
+	toFile << formattedJson(line); // передача char* форматирующей функции
+	toFile.close();				   // а затем в файл
+
+	std::ifstream finFile(filename); 
+	j << finFile; // потоковая передача данных в объект класса JSON
+
+	finFile.close();
+}
