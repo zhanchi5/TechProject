@@ -14,7 +14,7 @@ matrix:
             - ubuntu-toolchain-r-test
 script:
 - sudo apt-get install zlib1g-dev
-- sudo apt install curl
+#- sudo apt install curl
 - sudo apt install openssl
 - cd
 - ls
