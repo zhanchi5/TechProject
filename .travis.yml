@@ -19,7 +19,7 @@ script:
 - rm curl-7.54.0.tar.gz
 - ls
 - cd curl-7.54.0
-- ./configure --disable-ftp --disable-file --disable-ldap --disable-dict --disable-telnet --disable-tftp --disable-rtsp --disable-pop3 --disable-imap --disable-smtp --disable-gopher --disable-ares --disable-debug --without-ssl --without-zlib --without-libidn --without-librtmp
+- ./configure --prefix=/opt/curlssl --with-ssl=/usr/local/ssl --enable-http --enable-ftp LDFLAGS=-L/usr/local/ssl/lib CPPFLAGS=-I/usr/local/ssl/include
 - make
 - sudo make install
 - cd
