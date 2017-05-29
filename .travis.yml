@@ -25,7 +25,7 @@ script:
 - cd
 - ls
 
-- find -name libcurl.a
+- find -name libcurl
 - find -name *.a
 - find -name *.lib
 - sudo find -name "*ssl*"
